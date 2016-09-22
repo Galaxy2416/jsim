@@ -1,5 +1,5 @@
 # jsim
-A small spice for leaning. 
+A small spice for study. 
 
 ## History 
 
