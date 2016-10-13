@@ -20,7 +20,7 @@ class HspiceLexer(object):
        'TITLE',
        'NUMBER',
        'NAME',
-       'EXPR',
+#       'EXPR',
        'PARAM',
     )
     
@@ -31,7 +31,7 @@ class HspiceLexer(object):
     states = (
     ('title','exclusive'),
     ('param','exclusive'),
-    ('expr','exclusive'),
+    ('expr','inclusive'),
     )
     
     # A regular expression rule with some action code
@@ -54,10 +54,11 @@ class HspiceLexer(object):
     def t_param_INITIAL_NAME(self, t):
         return t
 
-    @TOKEN(expr)
-    def t_expr_EXPR(self, t):
-        t.value = str(t.value).replace(' ','') # strip the space
-        return t      
+
+#    @TOKEN(expr)
+#    def t_expr_EXPR(self, t):
+#        t.value = str(t.value).replace(' ','') # strip the space
+#        return t      
 
     def t_NUMBER(self,t):
         r'\d+'

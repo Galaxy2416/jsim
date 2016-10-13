@@ -12,14 +12,14 @@ class raw_node(object):
     
 class raw_param(object):
     name = ''
-    value = ''
+    value = 0
+    parse_tree = 0;
     
-    def __init__(self, name, value):
+    def __init__(self, name):
         self.name = name
-        self.value = value
         
     def __str__(self):      
-        return '$ Parameter : %s(name) = %s(value) ' % (self.name, self.value)
+        return '$ Parameter : %s(name) = %s(value) %s ' % (self.name, self.value, self.parse_tree)
         
 class raw_command(object):       
     title = ''
@@ -29,11 +29,12 @@ class raw_command(object):
         
 class raw_circuit(object):
     commands = raw_command()
+    parent_cir = 0
     name = ''
     port_list = [] # string 
     ins_list = [] # device
     xins_list = [] # subckt inst
-    param_list = []
+    param_dir = {}
     
     def __init__(self, name):
         self.name = name
@@ -51,8 +52,9 @@ class raw_circuit(object):
         self.xins_list.append(xins)   
         
     def add_param(self, param):
-        self.param_list.append(param)
-        
+        self.param_dir[param.name] = param
+   #    self.param_list.append(param)
+    
     def __str__(self):
         s = ''
         s += self.commands.__str__()
@@ -69,8 +71,8 @@ class raw_circuit(object):
         for i in self.xins_list:
             s += i.__str__()    
             s += '\n'
-        s += '\nThe Parameter Number is %d\n' % len(self.param_list)
-        for i in self.param_list:
+        s += '\nThe Parameter Number is %d\n' % len(self.param_dir)
+        for i in self.param_dir.values():
             s += i.__str__()  
             s += '\n'
         return s

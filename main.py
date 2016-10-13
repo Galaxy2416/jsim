@@ -11,11 +11,13 @@ from raw import top
 
 s =  '''
         .title HandsomeJack 
-        .param p = 10
-        .param p1 = p
+        .param p = 1 + 2
+        .param p1 = 1 + 2 * 3
+        .param p2 = p + p1
+        .param p3 = -p + -2
         
-         r r1(vcc, gnd) = p
-         c c1(vcc, gnd) = p1/100
+         r r1(vcc, gnd) = 32
+         c c1(vcc, gnd) = 333
         '''
 
 

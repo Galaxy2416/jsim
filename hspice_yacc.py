@@ -17,6 +17,7 @@ from raw import *
 
 cir_now = top
 
+
 def p_statments(p):
     ''' statments :  command_stm statments 
             | device_stm statments
@@ -32,7 +33,7 @@ def p_title(p):
     top.commands.title = p[2]
 
 def p_device_expr(p):
-    '''device_stm : NAME NAME '(' NODELIST ')' '=' EXPR'''
+    '''device_stm : NAME NAME '(' NODELIST ')' '=' expr'''
     device = raw_instance(p[2], p[1], p[7])
     device.add_port_list(p[4])
     cir_now.add_ins(device)
@@ -51,16 +52,65 @@ def p_nodelist_name(p):
     p[0] = [p[1]]
 
     
-    
-    
-    
 def p_param_stm(p):
     '''
-    param_stm : PARAM NAME '=' EXPR
+    param_stm : PARAM NAME '=' expr
     '''    
-    param = raw_param(p[2], p[4])
+    param = raw_param(p[2])
+    param.value = p[4][0]
+    param.parse_tree = p[4][1]
     cir_now.add_param(param)
     
+def p_expr(p):
+     '''
+     expr : expr '+' term
+     | expr '-' term
+     | term
+     '''
+     if (len(p) == 4):
+        if p[2] == '+':
+            p[0] = (p[1][0] + p[3][0], ('+',p[1][1],p[3][1]))
+        elif p[2] == '-':
+            p[0] = (p[1][0] - p[3][0], ('-',p[1][1],p[3][1]))
+     elif (len(p) == 2):
+        p[0] = p[1]
+        
+def p_term(p):
+    '''
+    term : term '*' factor
+    | term '/' factor
+    | factor
+    '''
+    if (len(p) == 4):
+        if p[2] == '*':
+            p[0] = (p[1][0] * p[3][0], ('*',p[1][1],p[3][1]))
+        elif p[2] == '/':
+            p[0] = (p[1][0] / p[3][0], ('/',p[1][1],p[3][1]))
+    elif (len(p) == 2):
+        p[0] = p[1]    
+
+def p_factor_num(p):
+    '''
+    factor : '-'  NUMBER
+    | NUMBER
+    '''   
+    if (len(p) == 3):
+        p[0] = (-p[2],(('NUM',-p[2])))    
+    elif (len(p) == 2):
+        p[0] = (p[1],(('NUM',p[1])))   
+        
+def p_factor_name(p):
+    '''
+    factor : '-'  NAME
+    | NAME
+    '''   
+    if (len(p) == 3):
+        par = cir_now.param_dir[p[2]] # TODO : if not find?
+        p[0] = (-par.value,('NUM','-'+ par.name)) 
+    elif (len(p) == 2):
+        par = cir_now.param_dir[p[1]] # TODO : if not find?
+        p[0] = (par.value,('NUM',par.name)) 
+       
 def p_empty(p):
     'empty :'
     pass
